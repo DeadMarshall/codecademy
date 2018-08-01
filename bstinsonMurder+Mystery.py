@@ -23,7 +23,7 @@
 # 
 # First let's create variables to hold the text data in! Save the muder note as a string in a variable called `murder_note`. Save Lily Trebuchet's introduction into `lily_trebuchet_intro`. Save Myrtle Beech's introduction into `myrtle_beech_intro`. Save Gregg T Fishy's introduction into `gregg_t_fishy_intro`.
 
-# In[254]:
+# In[286]:
 
 
 murder_note = "You may call me heartless, a killer, a monster, a murderer, but I'm still NOTHING compared to the villian that Jay was. This whole contest was a sham, an elaborate plot to shame the contestants and feed Jay's massive, massive ego. SURE you think you know him! You've seen him smiling for the cameras, laughing, joking, telling stories, waving his money around like a prop but off camera he was a sinister beast, a cruel cruel taskmaster, he treated all of us like slaves, like cattle, like animals! Do you remember Lindsay, she was the first to go, he called her such horrible things that she cried all night, keeping up all up, crying, crying, and more crying, he broke her with his words. I miss my former cast members, all of them very much. And we had to live with him, live in his home, live in his power, deal with his crazy demands. AND FOR WHAT! DID YOU KNOW THAT THE PRIZE ISN'T REAL? He never intended to marry one of us! The carrot on the stick was gone, all that was left was stick, he told us last night that we were all a terrible terrible disappointment and none of us would ever amount to anything, and that regardless of who won the contest he would never speak to any of us again! It's definitely the things like this you can feel in your gut how wrong he is! Well I showed him, he got what he deserved all right, I showed him, I showed him the person I am! I wasn't going to be pushed around any longer, and I wasn't going to let him go on pretending that he was some saint when all he was was a sick sick twisted man who deserved every bit of what he got. The fans need to know, Jay Stacksby is a vile amalgamation of all things evil and bad and the world is a better place without him."
@@ -47,30 +47,39 @@ gregg_t_fishy_intro = "A most good day to you all, I am Gregg T Fishy, of the Fi
 # 
 # Remember sentences can end with more than one kind of punctuation, you might find it easiest to use **.replace()** so you only have to split on one punctuation mark. Remember **.replace()** doesn't modify the string itself, it returns a new string!</font>
 
-# In[268]:
+# In[287]:
 
 
 def get_average_sentence_length(text):
     #Clean the text by sanitizing the punctuation
-    clean_text = text.replace("!", ".").replace("?",".")
+    clean_text = text.replace("!", ".").replace("?", ".").replace(",", "")
     
     #Get Sentences by splitting on punctuation
-    sentences_in_text = clean_text.split(".")
-    sentences_in_text = [i.strip(' ') for i in sentences_in_text]
-    sentences_in_text = [item for item in sentences_in_text if item]
-    number_sentences_in_text = len(sentences_in_text)
+    sentences = clean_text.split(".")
+    sentences = [i.strip(' ') for i in sentences]
+    sentences = [item for item in sentences if item]
+    number_sentences = len(sentences)
+    print(sentences)
+    
+    sentence_lengths = []
+    for sentence in sentences:
+        words = sentence.split()
+        sentence_lengths.append(len(words))
+
+    average = sum(sentence_lengths) / len(sentence_lengths)
+    return average
     
     #Get words in sentences by spliting sentences by spaces in the values in the list
-    words_in_text = []
-    for i in range(len(sentences_in_text)):
-        words_in_text.append(sentences_in_text[i].split(" "))
+    #words_in_text = []
+    #for i in range(len(sentences_in_text)):
+        #words_in_text.append(sentences_in_text[i].split(" "))
     
     #Get the length of the sentences
-    sentence_len_counter = 0
-    for j in words_in_text:
-        for k in j:
-            sentence_len_counter += len([k])
-    return (round(sentence_len_counter / number_sentences_in_text))        
+    #sentence_len_counter = 0
+    #for j in words_in_text:
+        #for k in j:
+            #sentence_len_counter += len([k])
+    #return (round(sentence_len_counter / number_sentences_in_text))        
             
     
 ###PRINT STATEMENTS###
@@ -85,7 +94,7 @@ def get_average_sentence_length(text):
     #print(sentence_len_counter)
 #print(get_average_sentence_length(lily_trebuchet_intro))
 #print(get_average_sentence_length(myrtle_beech_intro))
-print(get_average_sentence_length(gregg_t_fishy_intro))
+#print(get_average_sentence_length(gregg_t_fishy_intro))
 
 
 # ## Creating The Definition for Our Model
@@ -98,7 +107,7 @@ print(get_average_sentence_length(gregg_t_fishy_intro))
 #  
 # This will be your main class for the problem at hand. All later instruction to update `TextSample` should be done in the code block below. After updating `TextSample`, click on the `Cell` option in the Jupyter Notebook main menu above, then click `Run All` to rerun the cells from top to bottom. If you need to restart your Jupyter Notebook either run the cells below first or move the `TextSample` class definition & instantiation cells to the bottom.
 
-# In[256]:
+# In[288]:
 
 
 class TextSample:
@@ -124,7 +133,7 @@ class TextSample:
 #  
 # Print out each one after instantiating them.
 
-# In[257]:
+# In[289]:
 
 
 murder_sample = TextSample(murder_note, "murderer")
@@ -141,19 +150,15 @@ gregg_sample = TextSample(gregg_t_fishy_intro, "gregg")
 # 
 # For example: `"Where did you go, friend? We nearly saw each other."` would become `['where', 'did', 'you', 'go', 'friend', 'we', 'nearly', 'saw', 'each', 'other']`.
 
-# In[266]:
+# In[290]:
 
 
 def prepare_text(text):
-    clean_text = text.replace("!", ".").replace("?",".")
-    
-    #Get Sentences by splitting on punctuation
-    prepared_text = clean_text.split(".")
-    prepared_text = [i.strip(' ') for i in prepared_text]
-    prepared_text = [item for item in prepared_text if item]
-    prepared_text = [i.lower() for i in prepared_text]
-    return prepared_text
-print(prepare_text(murder_sample))
+    lower_text     = text.lower()
+    punctuation    = ".,!?"
+    no_punctuation = ''.join(letter for letter in lower_text if letter not in punctuation)
+    return no_punctuation.split()
+#print(prepare_text("Where did you go, friend? We nearly saw each other. Where did you go, friend? We nearly saw each other."))
 
 
 # Update the constructor for `TextSample` to save the prepared text as `self.prepared_text`.
@@ -162,7 +167,7 @@ print(prepare_text(murder_sample))
 # 
 # Now we want to see which words were most frequently used in each of the samples. Create a function called `build_frequency_table`. It takes in a list called `corpus` and creates a dictionary called `frequency_table`. For every element in `corpus` the value `frequency_table[element]` should be equal to the number of times that element appears in `corpus`. For example the input `['do', 'you', 'see', 'what', 'i', 'see']` would create the frequency table `{'what': 1, 'you': 1, 'see' 2, 'i': 1}`.
 
-# In[259]:
+# In[291]:
 
 
 def build_frequency_table(corpus):
@@ -192,7 +197,7 @@ def build_frequency_table(corpus):
 # 
 # These are two-word n-grams.
 
-# In[260]:
+# In[292]:
 
 
 def ngram_creator(text_list):
@@ -201,7 +206,6 @@ def ngram_creator(text_list):
     for i in range(len(text_list)):
         if i > 0:
             ngrams.append(text_list[i - 1] + " " + text_list[i])
-            ngrams_counter += 1
         #ngrams = [i.join(i) for i in text_list]
     return ngrams
         
@@ -222,26 +226,33 @@ def ngram_creator(text_list):
 # 
 # Return a frequency comparison score equal to the mutual appearances divided by the total appearances.
 
-# In[261]:
+# In[293]:
 
 
 def frequency_comparison(table1, table2):
-    appearances = []
-    mutual_appearances = []
-    for word_table1 in table1.keys():
-        for word_table2 in table2.keys():
-            if word_table1 == word_table2:
-                if table1[word_table1] > table2[word_table2]:
-                    mutual_appearances.append(table2[word_table2])
-                    appearances.append(table1[word_table1])
-                elif table1[word_table1] < table2[word_table2]:
-                    mutual_appearances.append(table1[word_table1])
-                    appearances.append(table2[word_table2])
+    appearances = 0
+    mutual_appearances = 0
+    for key in table1:
+        if key in table2:
+            value1 = table1.get(key)
+            value2 = table2.get(key)
+            if value2:
+                if value1 > value2:
+                    mutual_appearances += value2
+                    appearances += value1
+                else:
+                    mutual_appearances += value1
+                    appearances += value2
             else:
-                appearances.append(table1[word_table1])
-                appearances.append(table2[word_table2])
-    division = len(mutual_appearances)/len(appearances)
-    return division
+                appearances += value1
+        else:
+            appearances = table1.get(key)
+
+    keys_not_in_table1 = [key for key in table2 if key not in table1]
+    for key in keys_not_in_table1:
+        appearances += table2.get(key)
+
+    return mutual_appearances / appearances
 
 #print(frequency_comparison({'what': 3, 'you': 1, 'see': 2, 'i': 1},{'what': 1, 'you': 1, 'see': 2, 'i': 4}))
 
@@ -256,11 +267,11 @@ def frequency_comparison(table1, table2):
 # 
 # In the numerator is the absolute value (use `abs()`) of the two values subtracted from each other. In the denominator is the average of the two values (value1 + value2 divided by two).
 
-# In[262]:
+# In[310]:
 
 
 def percent_difference(value1, value2):
-    diff = ((abs(value1 - value2) / (value1 + value2) / 2) * 100)
+    diff = abs(value1 - value2) / (value1 + value2) / 2
     return diff
 
 
@@ -273,18 +284,18 @@ def percent_difference(value1, value2):
 # - Calculate the difference between their two-word ngram using `frequency_table` on both `TextSample`'s `ngram_frequency` attributes. Save that into a variable called `ngram_similarity`.
 # - Add all three similarities together and divide by 3.
 
-# In[263]:
+# In[311]:
 
 
 def find_text_similarity(sample1, sample2):
-    sentence_length_difference = percent_difference(sample1, sample2)
+    sentence_length_difference = percent_difference(sample1.average_sentence_length, sample2.average_sentence_length)
     sentence_length_similarity = abs(1 - sentence_length_difference)
-    word_count_similarity = frequency_comparison.word_count_frequency(sample1, sample2)
+    word_count_similarity = frequency_comparison(sample1.word_count_frequency, sample2.word_count_frequency)
     ngram_similarity = frequency_comparison(sample1.ngram_frequency, sample2.ngram_frequency)
-    result = float(sentence_length_similarity + word_count_similarity + ngram_similarity)
+    result = (sentence_length_similarity + word_count_similarity + ngram_similarity) / 3
     return result
 
-#print(find_text_similarity(murder_sample, lily_sample))
+print(find_text_similarity(murder_sample, lily_sample))
 
 
 # ## Rendering the Results
@@ -294,12 +305,12 @@ def find_text_similarity(sample1, sample2):
 # - Their name
 # - Their similarity score to the murder letter
 
-# In[264]:
+# In[313]:
 
 
 print("Lily Trebuchet: " + str(find_text_similarity(murder_sample, lily_sample)))
 print("Myrtle Beech: " + str(find_text_similarity(murder_sample, myrtle_sample)))
-print("Gregg T. Fishy" + srt(find_text_similarity(murder_sample, gregg_sample)))
+print("Gregg T. Fishy" + str(find_text_similarity(murder_sample, gregg_sample)))
 
 
 # # Who Dunnit?
@@ -309,5 +320,5 @@ print("Gregg T. Fishy" + srt(find_text_similarity(murder_sample, gregg_sample)))
 # In[ ]:
 
 
-print("Gregg T. Fishy")
+print("Lily Trebuchet")
 
